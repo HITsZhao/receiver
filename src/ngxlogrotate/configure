@@ -1,0 +1,12 @@
+#!/bin/bash
+# Copyright (C) zhao
+
+LC_ALL=C
+export LC_ALL
+
+. auto/options
+. auto/init
+. auto/sources
+
+. auto/cc/conf
+. auto/make

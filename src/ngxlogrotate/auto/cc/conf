@@ -1,0 +1,32 @@
+
+# Copyright zhao
+
+CC=${CC:-cc}
+CFLAGS="-pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g"
+LINK="\$(CC)"
+
+nlr_include_opt="-I "
+nlr_compile_opt="-c"
+nlr_objout="-o "
+nlr_binout="-o "
+nlr_objext="o"
+nlr_binext=
+
+nlr_long_start=
+nlr_long_end=
+
+#directory seperator
+nlr_regex_dirsep="\/"
+nlr_dirsep='/'
+
+nlr_regex_cont=' \\\
+	'
+nlr_cont=' \
+	'
+nlr_tab=' \
+		'
+nlr_spacer=
+
+nlr_long_regex_cont=$nlr_regex_cont
+nlr_long_cont=$nlr_cont
+

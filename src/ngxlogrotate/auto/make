@@ -1,0 +1,87 @@
+
+# Copyright zhao
+
+echo -e "creating $NLR_MAKEFILE"
+
+mkdir -p $NLR_OBJS/src
+
+nlr_objs_dir=$NLR_OBJS$nlr_regex_dirsep
+
+cat << END 				> $NLR_MAKEFILE
+
+CC =		$CC
+CFLAGS = $CFLAGS
+LINK = $LINK
+
+END
+
+# core source code
+#
+#
+nlr_all_srcs="$CORE_SRCS"
+nlr_deps=`echo $CORE_DEPS \
+			|sed -e "s/ *\([^ ][^ ]*\)/$nlr_regex_cont\1/g" \
+				-e "s/\//$nlr_regex_dirsep/g"`
+nlr_incs=`echo $CORE_INCS $NLR_OBJS \
+    | sed -e "s/  *\([^ ][^ ]*\)/$nlr_regex_cont$nlr_include_opt\1/g" \
+	          -e "s/\//$nlr_regex_dirsep/g"`
+
+cat << END 				>> $NLR_MAKEFILE
+CORE_DEPS = $nlr_deps
+
+CORE_INCS = $nlr_include_opt$nlr_incs
+
+END
+
+# add more source code below
+#
+#
+
+
+
+nlr_all_srcs=`echo $nlr_all_srcs | sed -e "s/\//$nlr_regex_dirsep/g"`
+
+nlr_all_objs=`echo $nlr_all_srcs \
+    | sed -e "s#\([^ ]*\.\)cpp#$NLR_OBJS\/\1$nlr_objext#g" \
+	          -e "s#\([^ ]*\.\)cc#$NLR_OBJS\/\1$nlr_objext#g" \
+			            -e "s#\([^ ]*\.\)c#$NLR_OBJS\/\1$nlr_objext#g" \
+						          -e "s#\([^ ]*\.\)S#$NLR_OBJS\/\1$nlr_objext#g"`
+nlr_deps=`echo $nlr_all_objs $nlr_modules_obj $nlr_res $LINK_DEPS \
+    		| sed -e "s/  *\([^ ][^ ]*\)/$nlr_regex_cont\1/g" \
+	          	-e "s/\//$nlr_regex_dirsep/g"`
+
+nlr_objs=`echo $nlr_all_objs $nlr_modules_obj \
+    | sed -e "s/  *\([^ ][^ ]*\)/$nlr_long_regex_cont\1/g" \
+	          -e "s/\//$nlr_regex_dirsep/g"`
+
+cat << END 											>> $NLR_MAKEFILE
+
+$NLR_OBJS${nlr_dirsep}ngxlogrotate${nlr_binext}:	$nlr_deps$nlr_spacer
+	\$(LINK) ${nlr_long_start}${nlr_binout}$NLR_OBJS${nlr_dirsep}ngxlogrotate$nlr_long_cont$nlr_objs$nlr_libs$nlr_link
+	$nlr_rcc
+${nlr_long_end}
+
+END
+
+nlr_cc="\$(CC) $nlr_compile_opt \$(CFLAGS) \$(CORE_INCS)"
+
+# core source
+#
+for nlr_src in $CORE_SRCS
+do
+    nlr_src=`echo $nlr_src | sed -e "s/\//$nlr_regex_dirsep/g"`
+    nlr_obj=`echo $nlr_src \
+        | sed -e "s#^\(.*\.\)cpp\\$#$nlr_objs_dir\1$nlr_objext#g" \
+              -e "s#^\(.*\.\)cc\\$#$nlr_objs_dir\1$nlr_objext#g" \
+              -e "s#^\(.*\.\)c\\$#$nlr_objs_dir\1$nlr_objext#g" \
+              -e "s#^\(.*\.\)S\\$#$nlr_objs_dir\1$nlr_objext#g"`
+    cat << END                                                >> $NLR_MAKEFILE
+
+$nlr_obj:	\$(CORE_DEPS)$nlr_cont$nlr_src
+	$nlr_cc$nlr_tab$nlr_objout$nlr_obj$nlr_tab$nlr_src$NGX_AUX
+
+END
+
+done
+
+

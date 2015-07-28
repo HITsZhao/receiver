@@ -1,0 +1,16 @@
+
+# Copyright zhao
+
+NLR_MAKEFILE=$NLR_OBJS/Makefile
+
+# create Makefile
+
+cat << END > Makefile
+
+default:	build
+
+clean:
+	rm -rf Makefile $NLR_OBJS
+build:
+	\$(MAKE) -f $NLR_MAKEFILE
+END
