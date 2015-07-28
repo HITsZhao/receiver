@@ -1,0 +1,54 @@
+
+# Copyright (C) zhao
+
+SFTP=sftp
+WWW=www
+NBPVG=nbpvg
+NBPDOWN=nbpdown
+NBPWWW=nbpwww
+SFTP_HOME=/home/sftp/NBP_AAS
+NBPVG_HOME=$SFTP_HOME"/vg_upload"
+
+#create group if not exists
+grep "$SFTP" /etc/group >& /dev/null
+if [ $? != 0 ]; then
+	echo -e "add user group: "$SFTP
+	groupadd $SFTP
+fi
+
+grep "$WWW" /etc/group >& /dev/null
+if [ $? != 0 ]; then
+	echo -e "add user group: "$WWW
+	groupadd $WWW
+fi
+
+#create home directory if not exists
+if [ -d $SFTP_HOME ]; then
+	echo -e "create home directory: "$SFTP_HOME
+	mkdir -p $SFTP_HOME
+fi
+
+if [ -d $NBPVG_HOME ]; then
+	echo -e "create home directory: "$NBPVG_HOME
+	mkdir -p $NBPVG_HOME
+fi
+
+#create user if not exists
+grep "$NBPVG" /etc/passwd >& /dev/null
+if [ $? != 0 ]; then
+	echo -e "add user: "$NBPVG
+	useradd -d $SFTP_HOME -g $SFTP -M -s /sbin/nologin
+fi
+
+grep "$NBPDOWN" /etc/passwd >& /dev/null
+if [ $? != 0 ]; then
+	echo -e "add user: "$NBPDOWN
+	useradd -d $SFTP_HOME -g $SFTP -G $WWW -M -s /sbin/nologin
+fi
+
+grep "$NBPWWW" /etc/passwd >& /dev/null
+if [ $? != 0 ]; then
+	echo -e "add user: "$NBPWWW
+	useradd -d $SFTP_HOME -g $WWW -M -s /sbin/nologin
+fi
+

@@ -1,0 +1,19 @@
+
+# Copyright (C) zhao
+
+echo "checking for OS"
+
+SYSTEM=`uname -s 2>/dev/null`
+RELEASE=`uname -r 2>/dev/null`
+MACHINE=`uname -m 2>/dev/null`
+
+echo " + $SYSTEM $RELEASE $MACHINE"
+
+PLATFORM="$SYSTEM:$RELEASE:$MACHINE"
+
+if [ $SYSTEM != "Linux" ]; then
+	echo -e $TEST_FAIL" system is not Linux"
+	exit 1;
+fi
+
+

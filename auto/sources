@@ -1,0 +1,84 @@
+
+# Copyright (C) zhao
+
+TEST_OK="[32m[OK][0m "
+TEST_FAIL="[35m[failed][0m "
+
+TAR_GZ=".tar.gz"
+
+PCRE_FILE="pcre2-10.10"
+NGINX_FILE="nginx-1.8.0"
+ZLIB_FILE="zlib-1.2.8"
+
+SRC_FILE="src"
+
+PCRE_SRC_TAR=$CURR_DIR"/"$SRC_FILE"/"$PCRE_FILE$TAR_GZ
+PCRE_SRC=$CURR_DIR"/"$SRC_FILE"/"$PCRE_FILE
+
+NGINX_SRC_TAR=$CURR_DIR"/"$SRC_FILE"/"$NGINX_FILE$TAR_GZ
+NGINX_SRC=$CURR_DIR"/"$SRC_FILE"/"$NGINX_FILE
+
+ZLIB_SRC_TAR=$CURR_DIR"/"$SRC_FILE"/"$ZLIB_FILE$TAR_GZ
+ZLIB_SRC=$CURR_DIR"/"$SRC_FILE"/"$ZLIB_FILE
+
+cd $CURR_DIR"/"$SRC_FILE
+
+echo -e "clean up..."
+
+rm -rf $PCRE_SRC $NGINX_SRC $ZLIB_SRC
+
+echo -e "checking sources files..."
+
+if [ -f $PCRE_SRC_TAR ]
+then
+	echo -e $TEST_OK$PCRE_SRC_TAR" exists"
+else
+	echo -e $TEST_FAIL$PCRE_SRC_TAR" doesn't exists"
+	exit 1;
+fi
+
+
+if [ -f $NGINX_SRC_TAR ]
+then
+	echo -e $TEST_OK$NGINX_SRC_TAR" exists"
+else
+	echo -e $TEST_FAIL$NGINX_SRC_TAR" doesn't exists"
+	exit 1;
+fi
+
+
+if [ -f $ZLIB_SRC_TAR ]
+then
+	echo -e $TEST_OK$ZLIB_SRC_TAR" exists"
+else
+	echo -e $TEST_FAIL$ZLIB_SRC_TAR" doesn't exists"
+	exit 1;
+fi
+
+echo -e "uncompressing the sources files"
+
+tar xzf $PCRE_SRC_TAR
+
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"uncompressing "$PCRE_SRC_TAR
+	rm -rf PCRE_SRC
+fi
+echo -e $TEST_OK"uncompressing "$PCRE_SRC_TAR" to "$PCRE_SRC
+
+tar xzf $NGINX_SRC_TAR
+
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"uncompressing "$NGINX_SRC_TAR
+	rm -rf NGINX_SRC
+fi
+echo -e $TEST_OK"uncompressing "$NGINX_SRC_TAR" to "$NGINX_SRC 
+
+tar xzf $ZLIB_SRC_TAR
+
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"uncompressing "$ZLIB_SRC_TAR
+	rm -rf ZLIB_SRC
+fi
+echo -e $TEST_OK"uncompressing "$ZLIB_SRC_TAR" to "$ZLIB_SRC 
+
+cd $CURR_DIR

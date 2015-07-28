@@ -1,0 +1,62 @@
+
+# Copyright (C) zhao
+
+help=no
+
+NGX_PREFIX=
+NGX_SBIN_PATH=
+NGX_CONF_PREFIX=
+NGX_CONF_PATH=
+
+NGX_USER=
+NGX_GROUP=
+
+opt=
+
+for option
+do
+	opt="$opt `echo $option | sed -e \"s/\(--[^=]*=\)\(.* .*\)/\1'\2'/\"`"
+	
+	case "$option" in
+        -*=*) value=`echo "$option" | sed -e 's/[-_a-zA-Z0-9]*=//'` ;;
+           *) value="" ;;
+    esac
+	
+	case "$option" in
+        --help)                          help=yes                   ;;
+
+        --prefix=)                       NGX_PREFIX="!"             ;;
+        --prefix=*)                      NGX_PREFIX="$value"        ;;
+        --sbin-path=*)                   NGX_SBIN_PATH="$value"     ;;
+        --conf-path=*)                   NGX_CONF_PATH="$value"     ;;
+		--user=*)                        NGX_USER="$value"          ;;
+        --group=*)                       NGX_GROUP="$value"         ;;
+			
+		*)
+            echo "$0: error: invalid option \"$option\""
+            exit 1
+        ;;
+    esac
+
+done
+
+if [ $help = yes  ]; then
+
+cat << END
+
+  --help                             print this message
+
+  --prefix=PATH                      set installation prefix
+  --sbin-path=PATH                   set nginx binary pathname
+  --conf-path=PATH                   set nginx.conf pathname
+
+  --user=USER                        set non-privileged user for
+                                     worker processes
+  --group=GROUP                      set non-privileged group for
+                                     worker processes
+
+END
+
+    exit 1
+fi
+

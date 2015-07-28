@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Copyright (C) zhao
+
+LC_ALL=C
+export LC_ALL
+
+#if [ $UID -ne 0 ]; then
+#	echo "root user are required to run this script"
+#	exit 1;
+#fi
+
+CURR_DIR=`pwd`
+cd $CURR_DIR
+
+. auto/options
+. auto/sources
+. auto/init
+
+echo -e "begin to install nginx..."
+cd $NGINX_SRC
+echo "change into directory:"$NGINX_SRC
+./configure --with-pcre=$PCRE_SRC --with-zlib=$ZLIB_SRC
+
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"configure nginx failed"
+	exit 1;
+fi
+
+
