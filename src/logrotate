@@ -1,0 +1,159 @@
+#!/bin/sh
+# Copyright (C) zhao
+
+#VG_UPLOAD_PATH=/home/sftp/NBP_AAS/vg_upload
+#CLI_LOG_PATH=/home/sftp/NBP_AAS/client_upload
+#VG_LOG_PATH=/home/sftp/NBP_AAS/vg
+NGX_LOG_PATH=/usr/local/nginx/logs
+NGX_PID_FILE=/usr/local/nginx/nginx.pid
+days=3
+
+VG_UPLOAD_PATH=/home/zhao/www/receiver/receiver/src/test/vg_upload
+CLI_LOG_PATH=/home/zhao/www/receiver/receiver/src/test/cli_upload
+VG_LOG_PATH=/home/zhao/www/receiver/receiver/src/test/vg
+
+NGX_LOG=/usr/local/nginx/logs/access.log
+YYYYMMDD_REX="[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}"
+YYMMDD_REX="[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}"
+LOG_NAME_REX="^.*-.*-[0-9]\{2\}[0-9]\{2\}[0-9]\{2\}.*log$"
+
+basepath=$(cd `dirname $0`; pwd)
+echo "cd "$basepath
+cd $basepath
+rotatelog=$basepath/rotate.log
+
+function log(){
+	#create log
+	
+	now=`date "+%Y-%m-%d:%H:%M:%S"`
+	cat<< END >>$rotatelog
+[$now] $1
+END
+#	fi
+}
+
+log "change into directory $basepath"
+log "vg upload path is: $VG_UPLOAD_PATH"
+log "client upload path is: $CLI_LOG_PATH"
+log "vg log path is: $VG_LOG_PATH"
+log "days to keep is: $days"
+log "nginx log path is: $NGX_LOG_PATH"
+log "nginx PID file is: $NGX_PID_FILE"
+log "nginx log is: $NGX_LOG"
+
+dateArray=
+
+function dateCheck(){
+	for d in $(seq 0 $1)
+	do
+		dateArray[$d]=`date "+%Y-%m-%d" -d"-$d day"`
+	done
+}
+
+yymmdd=
+
+function vgsubfilename(){
+	str=$1
+	logext=6
+	dateext=6
+	len=`expr length $1`
+	end=`expr $len - $logext`
+	begin=`expr $end - $dateext`
+	echo ${str:$begin:$dateext}
+	yymmdd=${str:$begin:$dateext}
+	yymmdd=`date -d "$yymmdd" +%Y-%m-%d`
+}
+
+dateCheck `expr $days - 1`
+#echo ${dateArray[0]}
+#echo ${dateArray[1]}
+#echo ${dateArray[2]}
+
+log "valide date is: ${dateArray[*]}"
+
+
+# to check the date directory name
+# remove if directory name out of date
+function yyyymmdd(){
+	#echo "yyyymmdd"
+	log "checking the directory name of $1"
+	path=$1
+	for file in $path/*;do
+		log "checking for file: $file"
+		filename=`basename $file`
+		echo $filename|grep "$YYYYMMDD_REX" > /dev/null
+		if [ $? = 0 ]; then
+			log "file: $file is valid name"
+			if [[ " ${dateArray[*]} " == *" $filename "*  ]]; then
+				#echo $filename" contained"
+				#echo $file
+				log "file: $file is not out of date, keep it."
+			else
+				#echo $filename" doesn't contained"
+				log "file: $file is out of date, remove it"
+				rm -rf $file
+			fi
+		else
+			log "file: $file is invalid name, remove it"
+			rm -rf $file
+		fi
+	done
+}
+
+# to check the vg file name
+# input vg top directory
+function vgyymmdd(){
+	#echo "vgyymmdd"
+	log "checking for vg upload files in path: $1"
+	path=$1
+	#echo $path
+	for file in $path/*;do
+		log "checking for file: $file"
+		filename=`basename $file`
+		echo $filename|grep "$LOG_NAME_REX" > /dev/null
+		if [ $? = 0 ]; then
+			log "file: $file is valid file name."
+			vgsubfilename $filename
+			log "from file: $file get match date is $yymmdd"
+			if [[ " ${dateArray[*]} " == *" $yymmdd "*  ]]; then
+				#echo $filename" contained"
+				log "file: $file is not out of date."
+				log "make directory: $VG_LOG_PATH/$yymmdd"
+				mkdir -p $VG_LOG_PATH/$yymmdd
+				log "move $file to $VG_LOG_PATH/$yymmdd"
+				mv -f $file $VG_LOG_PATH/$yymmdd
+			else
+				log "file: $file is out of date."
+				echo $filename" doesn't contained"
+			fi
+		else
+			log "invalid upload file name: $file"
+		fi
+	done
+}
+
+function ngxrelog(){
+	now=`date "+%Y-%m-%d"`
+	#echo $now
+	mkdir -p ${CLI_LOG_PATH}/$now
+	log "make directory: ${CLI_LOG_PATH}/$now"
+	if [ -f ${NGX_LOG_PATH/access.log} ]; then
+		log "move ${NGX_LOG_PATH}/access.log to ${CLI_LOG_PATH}/$now/$now.log"
+		mv ${NGX_LOG_PATH}/access.log ${CLI_LOG_PATH}/$now/$now.log
+	else
+		log "Do not find ${NGX_LOG_PATH}/access.log"
+	fi
+	if [ -f ${NGX_PID_FILE} ]; then
+		log "singal nginx to regenerate log files."
+		kill -USR1 `cat ${NGX_PID_FILE}`
+	else
+		log "Do not find ${NGX_PID_FILE}"
+	fi
+}
+
+ngxrelog
+yyyymmdd $VG_LOG_PATH
+yyyymmdd $CLI_LOG_PATH
+vgyymmdd $VG_UPLOAD_PATH
+
+log "============done==========="

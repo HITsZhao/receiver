@@ -5,9 +5,11 @@ CORE_INCS="src"
 
 CORE_DEPS="$CORE_INCS/ngxlogrotate.h \
 			$CORE_INCS/nlr_file.h \
+			$CORE_INCS/nlr_date.h \
 			"
 
 CORE_SRCS="$CORE_INCS/ngxlogrotate.c \
 			$CORE_INCS/nlr_file.c \
+			$CORE_INCS/nlr_date.c \
 			"
 

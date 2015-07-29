@@ -22,8 +22,11 @@ is_file_exists(const u_char *file)
 {
 	if (file == NULL)
 		return NLR_ERROR;
-	if (access((const char *)file, F_OK) == 0)
+	DIR *dir = opendir((const char*)file);
+	if ( dir != NULL){
+		closedir(dir);
 		return NLR_OK;
+	}
 	return NLR_ERROR;
 }
 
