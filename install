@@ -26,5 +26,42 @@ if [ $? != 0 ]; then
 	echo -e $TEST_FAIL"configure nginx failed"
 	exit 1;
 fi
+echo -e $TEST_OK"configure nginx"
+
+make
+
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"make nginx failed"
+	exit 1;
+fi
+echo -e $TEST_OK"make nginx"
+
+#make install
+
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"install nginx failed"
+	exit 1;
+fi
+echo -e $TEST_OK"install nginx"
+
+crontask="01 00 * * * $CURR_DIR/src/logrotate"
+cat << END  > $CURR_DIR/src/rotate.cron
+$crontask
+END
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"create crontab file"
+	exit 1;
+fi
+echo -e $TEST_OK"create crontab file"
+
+crontab -r
+crontab $CURR_DIR/src/rotate.cron
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"submit crontab task"
+	exit 1;
+fi
+echo -e $TEST_OK"submit crontab task"
+cat $CURR_DIR/src/rotate.cron|awk '{print $6" task will be execute at "$2":"$1" every day"}'
+
 
 

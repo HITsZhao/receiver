@@ -6,9 +6,11 @@ TEST_FAIL="[35m[failed][0m "
 
 TAR_GZ=".tar.gz"
 
-PCRE_FILE="pcre2-10.10"
+PCRE_FILE="pcre-8.36"
 NGINX_FILE="nginx-1.8.0"
 ZLIB_FILE="zlib-1.2.8"
+LOGROTATE_CONF="conf"
+LOGROTATE="logrotate"
 
 SRC_FILE="src"
 
@@ -21,6 +23,9 @@ NGINX_SRC=$CURR_DIR"/"$SRC_FILE"/"$NGINX_FILE
 ZLIB_SRC_TAR=$CURR_DIR"/"$SRC_FILE"/"$ZLIB_FILE$TAR_GZ
 ZLIB_SRC=$CURR_DIR"/"$SRC_FILE"/"$ZLIB_FILE
 
+LOGROTATE_CONF_SRC=$CURR_DIR"/"$SRC_FILE"/"$LOGROTATE_CONF
+LOGROTATE_SRC=$CURR_DIR"/"$SRC_FILE"/"$LOGROTATE
+
 cd $CURR_DIR"/"$SRC_FILE
 
 echo -e "clean up..."
@@ -28,6 +33,22 @@ echo -e "clean up..."
 rm -rf $PCRE_SRC $NGINX_SRC $ZLIB_SRC
 
 echo -e "checking sources files..."
+
+if [ -f $LOGROTATE_CONF_SRC ]
+then
+	echo -e $TEST_OK$LOGROTATE_CONF_SRC" exists"
+else
+	echo -e $TEST_FAIL$LOGROTATE_CONF_SRC" doesn't exists"
+	exit 1;
+fi
+
+if [ -f $LOGROTATE_SRC ]
+then
+	echo -e $TEST_OK$LOGROTATE_SRC" exists"
+else
+	echo -e $TEST_FAIL$LOGROTATE_SRC" doesn't exists"
+	exit 1;
+fi
 
 if [ -f $PCRE_SRC_TAR ]
 then
@@ -62,6 +83,7 @@ tar xzf $PCRE_SRC_TAR
 if [ $? != 0 ]; then
 	echo -e $TEST_FAIL"uncompressing "$PCRE_SRC_TAR
 	rm -rf PCRE_SRC
+	exit 1;
 fi
 echo -e $TEST_OK"uncompressing "$PCRE_SRC_TAR" to "$PCRE_SRC
 
@@ -70,6 +92,7 @@ tar xzf $NGINX_SRC_TAR
 if [ $? != 0 ]; then
 	echo -e $TEST_FAIL"uncompressing "$NGINX_SRC_TAR
 	rm -rf NGINX_SRC
+	exit 1;
 fi
 echo -e $TEST_OK"uncompressing "$NGINX_SRC_TAR" to "$NGINX_SRC 
 
@@ -78,6 +101,7 @@ tar xzf $ZLIB_SRC_TAR
 if [ $? != 0 ]; then
 	echo -e $TEST_FAIL"uncompressing "$ZLIB_SRC_TAR
 	rm -rf ZLIB_SRC
+	exit 1;
 fi
 echo -e $TEST_OK"uncompressing "$ZLIB_SRC_TAR" to "$ZLIB_SRC 
 
