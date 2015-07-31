@@ -1,25 +1,25 @@
 #!/bin/sh
 # Copyright (C) zhao
 
-#VG_UPLOAD_PATH=/home/sftp/NBP_AAS/vg_upload
-#CLI_LOG_PATH=/home/sftp/NBP_AAS/client_upload
-#VG_LOG_PATH=/home/sftp/NBP_AAS/vg
+
+basepath=$(cd `dirname $0`; pwd)
+cd $basepath
+. $basepath/conf
+
+VG_UPLOAD_PATH=${VG_UPLOAD_PATH:-"/home/sftp/NBP_AAS/vg_upload"}
+CLI_LOG_PATH=${CLI_LOG_PATH:-"/home/sftp/NBP_AAS/client_upload"}
+VG_LOG_PATH=${VG_LOG_PATH:-"/home/sftp/NBP_AAS/vg"}
 NGX_LOG_PATH=/usr/local/nginx/logs
 NGX_PID_FILE=/usr/local/nginx/nginx.pid
 days=3
 
-VG_UPLOAD_PATH=/home/zhao/www/receiver/receiver/src/test/vg_upload
-CLI_LOG_PATH=/home/zhao/www/receiver/receiver/src/test/cli_upload
-VG_LOG_PATH=/home/zhao/www/receiver/receiver/src/test/vg
 
 NGX_LOG=/usr/local/nginx/logs/access.log
 YYYYMMDD_REX="[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}"
 YYMMDD_REX="[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}"
 LOG_NAME_REX="^.*-.*-[0-9]\{2\}[0-9]\{2\}[0-9]\{2\}.*log$"
 
-basepath=$(cd `dirname $0`; pwd)
 echo "cd "$basepath
-cd $basepath
 rotatelog=$basepath/rotate.log
 
 function log(){

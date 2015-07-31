@@ -1,0 +1,9 @@
+# this is configuration files for logrotate
+#VG_UPLOAD_PATH=/home/sftp/NBP_AAS/vg_upload
+#CLI_LOG_PATH=/home/sftp/NBP_AAS/client_upload
+#VG_LOG_PATH=/home/sftp/NBP_AAS/vg
+days=3
+
+VG_UPLOAD_PATH=/home/zhao/www/receiver/receiver/src/test/vg_upload
+CLI_LOG_PATH=/home/zhao/www/receiver/receiver/src/test/cli_upload
+VG_LOG_PATH=/home/zhao/www/receiver/receiver/src/test/vg
