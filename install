@@ -16,6 +16,7 @@ cd $CURR_DIR
 . auto/options
 . auto/sources
 . auto/init
+#. auto/users
 
 echo -e "begin to install nginx..."
 cd $NGINX_SRC
