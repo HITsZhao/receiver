@@ -68,7 +68,23 @@ if [ $? != 0 ]; then
 	echo -e $TEST_FAIL"start nginx: $NGINX_SBIN_PATH"
 	exit 1;
 fi
-echo -e $TEST_OK"start nginx; $NGINX_SBIN_PATH"
+echo -e $TEST_OK"start nginx: $NGINX_SBIN_PATH"
+
+cp -f $SSHD_CONF_SRC /etc/ssh/$SSHD_CONF
+
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"set sshd configuration: $SSHD_CONF_SRC to /etc/ssh/$SSHD_CONF"
+	exit 1;
+fi
+echo -e $TEST_OK"set sshd configuration: $NGINX_SBIN_PATH to /etc/ssh/$SSHD_CONF"
+
+systemctl restart sshd
+
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"restart sshd"
+	exit 1;
+fi
+echo -e $TEST_OK"restart sshd"
 
 
 crontask="01 00 * * * $CURR_DIR/src/logrotate"
@@ -90,5 +106,6 @@ fi
 echo -e $TEST_OK"submit crontab task"
 cat $CURR_DIR/src/rotate.cron|awk '{print $6" task will be execute at "$2":"$1" every day"}'
 echo -e $TEST_OK"done"
+echo -e "[32m[important!!][0m please set password for user: [$NBPVG $NBPDOWN $NBPWWW] manually. " 
 
 

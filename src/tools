@@ -6,12 +6,17 @@ basepath=$(cd `dirname $0`; pwd)
 cd $basepath
 
 if [ $# != 1 ]; then
-	echo "usage: tools -fp"
+	echo "usage: tools -fp: get fingerprint"
+	echo "       tools -pwd: get password after crypt"
 	exit 1
 fi
 
 if [ $1 = "-fp" ]; then
 	ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub|awk '{print $2}'|tee fingerprint
 	exit 0;
+fi
+
+if [ $1 = "-pwd" ]; then
+	openssl passwd -crypt
 fi
 

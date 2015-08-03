@@ -12,6 +12,7 @@ ZLIB_FILE="zlib-1.2.8"
 NGINX_CONF="nginx.conf"
 LOGROTATE_CONF="conf"
 LOGROTATE="logrotate"
+SSHD_CONF="sshd_config"
 
 SRC_FILE="src"
 
@@ -28,6 +29,8 @@ NGINX_CONF_SRC=$CURR_DIR"/"$SRC_FILE"/"$NGINX_CONF
 
 LOGROTATE_CONF_SRC=$CURR_DIR"/"$SRC_FILE"/"$LOGROTATE_CONF
 LOGROTATE_SRC=$CURR_DIR"/"$SRC_FILE"/"$LOGROTATE
+
+SSHD_CONF_SRC=$CURR_DIR"/"$SRC_FILE"/"$SSHD_CONF
 
 cd $CURR_DIR"/"$SRC_FILE
 
@@ -50,6 +53,14 @@ then
 	echo -e $TEST_OK$LOGROTATE_SRC" exists"
 else
 	echo -e $TEST_FAIL$LOGROTATE_SRC" doesn't exists"
+	exit 1;
+fi
+
+if [ -f $SSHD_CONF_SRC ]
+then
+	echo -e $TEST_OK$SSHD_CONF_SRC" exists"
+else
+	echo -e $TEST_FAIL$SSHD_CONF_SRC" doesn't exists"
 	exit 1;
 fi
 
