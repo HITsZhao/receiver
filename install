@@ -5,10 +5,10 @@
 LC_ALL=C
 export LC_ALL
 
-#if [ $UID -ne 0 ]; then
-#	echo "root user are required to run this script"
-#	exit 1;
-#fi
+if [ $UID -ne 0 ]; then
+	echo "root user are required to run this script"
+	exit 1;
+fi
 
 CURR_DIR=`pwd`
 cd $CURR_DIR
@@ -36,13 +36,40 @@ if [ $? != 0 ]; then
 fi
 echo -e $TEST_OK"make nginx"
 
-#make install
+make install
 
 if [ $? != 0 ]; then
 	echo -e $TEST_FAIL"install nginx failed"
 	exit 1;
 fi
 echo -e $TEST_OK"install nginx"
+
+cp -f $NGINX_CONF_SRC $NGINX_CONF_PATH
+ 
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"deploy $NGINX_CONF_SRC"
+	exit 1;
+fi
+echo -e $TEST_OK"deploy $NGINX_CONF_SRC"
+
+echo -e "Try to start nginx: $NGINX_SBIN_PATH"
+
+$NGINX_SBIN_PATH -t
+
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"check nginx configuration: $NGINX_CONF_PATH"
+	exit 1;
+fi
+echo -e $TEST_OK"start nginx; $NGINX_CONF_PATH"
+
+$NGINX_SBIN_PATH
+
+if [ $? != 0 ]; then
+	echo -e $TEST_FAIL"start nginx: $NGINX_SBIN_PATH"
+	exit 1;
+fi
+echo -e $TEST_OK"start nginx; $NGINX_SBIN_PATH"
+
 
 crontask="01 00 * * * $CURR_DIR/src/logrotate"
 cat << END  > $CURR_DIR/src/rotate.cron

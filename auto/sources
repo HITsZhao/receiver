@@ -9,6 +9,7 @@ TAR_GZ=".tar.gz"
 PCRE_FILE="pcre-8.36"
 NGINX_FILE="nginx-1.8.0"
 ZLIB_FILE="zlib-1.2.8"
+NGINX_CONF="nginx.conf"
 LOGROTATE_CONF="conf"
 LOGROTATE="logrotate"
 
@@ -22,6 +23,8 @@ NGINX_SRC=$CURR_DIR"/"$SRC_FILE"/"$NGINX_FILE
 
 ZLIB_SRC_TAR=$CURR_DIR"/"$SRC_FILE"/"$ZLIB_FILE$TAR_GZ
 ZLIB_SRC=$CURR_DIR"/"$SRC_FILE"/"$ZLIB_FILE
+
+NGINX_CONF_SRC=$CURR_DIR"/"$SRC_FILE"/"$NGINX_CONF
 
 LOGROTATE_CONF_SRC=$CURR_DIR"/"$SRC_FILE"/"$LOGROTATE_CONF
 LOGROTATE_SRC=$CURR_DIR"/"$SRC_FILE"/"$LOGROTATE
@@ -67,6 +70,13 @@ else
 	exit 1;
 fi
 
+if [ -f $NGINX_CONF_SRC ]
+then
+	echo -e $TEST_OK$NGINX_CONF_SRC" exists"
+else
+	echo -e $TEST_FAIL$NGINX_CONF_SRC" doesn't exists"
+	exit 1;
+fi
 
 if [ -f $ZLIB_SRC_TAR ]
 then

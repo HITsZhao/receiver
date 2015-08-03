@@ -16,4 +16,5 @@ if [ $SYSTEM != "Linux" ]; then
 	exit 1;
 fi
 
-
+NGINX_SBIN_PATH=/usr/local/nginx/sbin/nginx
+NGINX_CONF_PATH=/usr/local/nginx/conf/nginx.conf
